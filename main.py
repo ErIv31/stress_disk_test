@@ -32,7 +32,8 @@ def format_disk(disk):
 # Примонтируем диск
 def mount_disk(disk):
     os.system('mkdir /mnt/disk')
-    linux_filesystem_disk = get_console_output('fdisk -l | grep "Linux filesystem"')[0:9]
+    linux_filesystem_disk = get_console_output(
+        'fdisk -l | grep "Linux filesystem"')[0:9]
     os.system(f'mount {linux_filesystem_disk} /mnt/disk/')
 
 
@@ -45,10 +46,11 @@ def move_to_disk_folder():
 def start_stress_test(test_time: str):
     #os.system(f'stress-ng --class filesystem --sequential 8 --timeout {test_time}s --metrics-brief &')
     #os.system(f'stress-ng --cpu 4 --io 4 --hdd 4 hdd-opts rd-rnd wr-rnd --vm 4 --timeout {test_time}s &')
-    os.system(f'stress-ng --sequential 0 --class io --timeout {test_time}s --metrics-brief &')
+    os.system(
+        f'stress-ng --sequential 0 --class io --timeout {test_time}s --metrics-brief &')
     print(f'Test is starting during {test_time} seconds')
 
-    
+
 # Калькулятор времени
 def time_calculator(test_time):
     cores = get_console_output('nproc')
@@ -56,11 +58,11 @@ def time_calculator(test_time):
     time_format = time.strftime("%H:%M:%S", time.gmtime(time_end))
     print('Начало теста:', datetime.datetime.now().strftime("%H:%M:%S"))
     print('Конец теста:', time_format)
-    return time_end    
-    
+    return time_end
+
 
 #  Получаем значения температур
-def temperature_list(test_time):
+def temperature_list(time_end):
     value_list = []
     while time.time() <= time_end:
         temperature_value = get_console_output(
@@ -85,8 +87,9 @@ if __name__ == "__main__":
         print('Укажи время теста в секундах')
         test_time = input()
         start_stress_test(test_time)
-        temperature_values = temperature_list(time_calculator(test_time))
-        #print(temperature_values)
+        time_end = time_calculator(test_time)
+        temperature_values = temperature_list(time_end)
+        # print(temperature_values)
         print('Минимальная температура: ', min(
             temperature_values), '°C', sep='')
         print('Максимальная температура: ', max(
