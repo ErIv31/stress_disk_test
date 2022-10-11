@@ -19,7 +19,7 @@ def get_logical_disk_name(output):
 
 # Определяем сколько разделов на диске
 def how_many_partitions(disk):
-    return len(partition = get_console_output(
+    return len(get_console_output(
         f'ls /dev/ | grep {disk}').strip().split('\n'))
 
 
