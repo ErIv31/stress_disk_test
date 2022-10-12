@@ -66,7 +66,7 @@ def temperature_list(time_end):
     value_list = []
     while time.time() <= time_end:
         temperature_value = get_console_output(
-            "smartctl -A /dev/sda | grep Temperature | awk '{print $10}'")
+            "smartctl -A /dev/sda | grep Temperature | awk '{print $10}'") # Надо изменить sda на logic_name, который передается из другой функции
         value_list.append(int(temperature_value))
         #date = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         #print(date, 'Температура: ' + temperature_value, end='')
