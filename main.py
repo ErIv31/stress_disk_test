@@ -62,11 +62,11 @@ def time_calculator(test_time):
 
 
 #  Получаем значения температур
-def temperature_list(time_end):
+def temperature_list(time_end, logic_disk_name):
     value_list = []
     while time.time() <= time_end:
         temperature_value = get_console_output(
-            "smartctl -A /dev/sda | grep Temperature | awk '{print $10}'") # Надо изменить sda на logic_name, который передается из другой функции
+            f"smartctl -A /dev/{logic_disk_name} | grep 194").split(' ')[-3] # Надо изменить sda на logic_name, который передается из другой функции
         value_list.append(int(temperature_value))
         #date = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         #print(date, 'Температура: ' + temperature_value, end='')
@@ -87,8 +87,7 @@ if __name__ == "__main__":
         print('Укажи время теста в секундах')
         test_time = input()
         start_stress_test(test_time)
-        time_end = time_calculator(test_time)
-        temperature_values = temperature_list(time_end)
+        temperature_values = temperature_list(time_calculator(test_time), logic_disk_name)
         # print(temperature_values)
         print('Минимальная температура: ', min(
             temperature_values), '°C', sep='')
