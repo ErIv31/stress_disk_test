@@ -23,6 +23,11 @@ def how_many_partitions(disk):
         f'ls /dev/ | grep {disk}').strip().split('\n'))
 
 
+# Определяем название вендора жесткого диска
+def get_vendor_disk_name(output):
+    return re.search(r'ata.*', output).group(0).split(' ')[0][4:29]
+
+
 # Форматируем диск
 def format_disk(disk):
     os.system(
