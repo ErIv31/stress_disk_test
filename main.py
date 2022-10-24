@@ -78,6 +78,23 @@ def temperature_list(time_end, logic_disk_name):
     return value_list
 
 
+# Открываем и записываем текстовый файл для записи информации по тестам
+# def file_read(filename):
+#     open_file = open(filename, 'r')
+#     print(open_file.read())
+#     open_file.close()
+
+# def file_write(filename, value):
+#     open_file = open(filename, 'a')
+#     open_file.write(value)
+#     open_file.close()
+
+# val = input('Что хочешь записать? ') 
+# file_name = input('File name: ')
+# file_write(file_name, val + '\n')
+# file_read(file_name)
+
+
 if __name__ == "__main__":
     disks = get_console_output('ls -l /dev/disk/by-id')
     logic_disk_name = get_logical_disk_name(disks)
