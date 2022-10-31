@@ -78,26 +78,25 @@ def temperature_list(time_end, logic_disk_name):
     return value_list
 
 
-# Открываем и записываем текстовый файл для записи информации по тестам
-# def file_read(filename):
-#     open_file = open(filename, 'r')
-#     print(open_file.read())
-#     open_file.close()
+# Записываем текстовый файл с информацией по тестам
+def file_write(filename, value):
+    open_file = open(filename, 'a')
+    open_file.write(value)
+    open_file.close()
+    
 
-# def file_write(filename, value):
-#     open_file = open(filename, 'a')
-#     open_file.write(value)
-#     open_file.close()
-
-# val = input('Что хочешь записать? ') 
-# file_name = input('File name: ')
-# file_write(file_name, val + '\n')
-# file_read(file_name)
+# Открываем для чтения текстовый файл с информацией по тестам
+def file_read(filename):
+    open_file = open(filename, 'r')
+    print(open_file.read())
+    open_file.close()
 
 
 if __name__ == "__main__":
     disks = get_console_output('ls -l /dev/disk/by-id')
     logic_disk_name = get_logical_disk_name(disks)
+    vendor_disk_name = (re.search(r'ata.*', disks.group(0).split(' ')[0][4:29]).replace('_', ' '))
+    actual_date = datetime.datetime.now().strftime('%d.%m.%Y')
     amount_of_disk_partition = how_many_partitions(logic_disk_name)
     while amount_of_disk_partition <= 1:
         format_disk(logic_disk_name)
@@ -106,12 +105,12 @@ if __name__ == "__main__":
     if amount_of_disk_partition > 1:
         mount_disk()
         move_to_disk_folder()
-        print('Укажи время теста в секундах')
-        test_time = input()
+        test_time = input('Укажи время теста в секундах: ')
         start_stress_test(test_time)
         temperature_values = temperature_list(time_calculator(test_time), logic_disk_name)
         # print(temperature_values)
-        print('Минимальная температура: ', min(
-            temperature_values), '°C', sep='')
-        print('Максимальная температура: ', max(
-            temperature_values), '°C', sep='')
+        max_temp = max(temperature_values)
+        file_write('disk_test.txt', actual_date + ' | ' + vendor_disk_name + ' | ' + max_temp + '°C' +'\n')
+        file_read('disk_test.txt')
+        # print('Максимальная температура: ', max(
+        #     temperature_values), '°C', sep='')
