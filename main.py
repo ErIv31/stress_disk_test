@@ -40,7 +40,7 @@ def format_disk(disk):
 
 
 # Примонтируем диск
-def mount_disk(disk):
+def mount_disk():
     os.system('mkdir /mnt/disk')
     disk_type = get_disk_type()
     if disk_type == 'ext4':
