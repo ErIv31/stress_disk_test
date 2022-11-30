@@ -28,6 +28,11 @@ def get_vendor_disk_name(output):
     return re.search(r'ata.*', output).group(0).split(' ')[0][4:29]
 
 
+# Определяем тип диска ufs, ext4, ...
+def get_disk_type():
+    return re.search(r'TYPE.*', get_console_output('blkid | grep sda2')).group(0).split(' ')[0][6:10]
+
+
 # Форматируем диск
 def format_disk(disk):
     os.system(
@@ -37,9 +42,13 @@ def format_disk(disk):
 # Примонтируем диск
 def mount_disk(disk):
     os.system('mkdir /mnt/disk')
-    linux_filesystem_disk = get_console_output(
-        'fdisk -l | grep "Linux filesystem"')[0:9]
-    os.system(f'mount {linux_filesystem_disk} /mnt/disk/')
+    disk_type = get_disk_type()
+    if disk_type == 'ext4':
+        linux_filesystem_disk = get_console_output(
+            'fdisk -l | grep "Linux filesystem"')[0:9]
+        os.system(f'mount {linux_filesystem_disk} /mnt/disk/')
+    elif disk_type == 'ufs':
+        os.system('mount /dev/sda8 /mnt/disk/')
 
 
 # Перемещаемся в директорию диска
@@ -51,11 +60,11 @@ def move_to_disk_folder():
 def start_stress_test(test_time: str):
     #os.system(f'stress-ng --class filesystem --sequential 8 --timeout {test_time}s --metrics-brief &')
     #os.system(f'stress-ng --cpu 4 --io 4 --hdd 4 hdd-opts rd-rnd wr-rnd --vm 4 --timeout {test_time}s &')
-    # os.system(f'stress-ng --timeout {test_time}s --hdd 0 &') # нагрузка только диска
-    # print(f'Test is starting during {test_time} seconds')
-    os.system(
-        f'stress-ng --sequential 0 --class io --timeout {test_time}s --metrics-brief &')
+    os.system(f'stress-ng --timeout {test_time}s --hdd 0 &') # нагрузка только диска
     print(f'Test is starting during {test_time} seconds')
+    # os.system(
+    #     f'stress-ng --sequential 0 --class io --timeout {test_time}s --metrics-brief &')
+    # print(f'Test is starting during {test_time} seconds')
 
 
 # Калькулятор времени
