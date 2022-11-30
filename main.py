@@ -121,7 +121,7 @@ if __name__ == "__main__":
         temperature_values = temperature_list(time_calculator(test_time), logic_disk_name)
         # print(temperature_values)
         max_temp = max(temperature_values)
-        file_write('disk_test.txt', actual_date + ' | ' + vendor_disk_name + ' | ' + max_temp + '°C' +'\n')
+        file_write('disk_test.txt', actual_date + ' | ' + vendor_disk_name + ' | ' + str(max_temp) + '°C' +'\n')
         file_read('disk_test.txt')
         # print('Максимальная температура: ', max(
         #     temperature_values), '°C', sep='')
