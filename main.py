@@ -30,7 +30,7 @@ def get_vendor_disk_name(output):
 
 # Определяем тип диска ufs, ext4, ...
 def get_disk_type():
-    return re.search(r'TYPE.*', get_console_output('blkid | grep sda2')).group(0).split(' ')[0][6:10]
+    return re.search(r'TYPE.*', get_console_output('blkid | grep sda1')).group(0).split(' ')[0][6:10]
 
 
 # Форматируем диск
