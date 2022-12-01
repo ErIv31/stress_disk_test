@@ -48,7 +48,7 @@ def mount_disk():
             'fdisk -l | grep "Linux filesystem"')[0:9]
         os.system(f'mount {linux_filesystem_disk} /mnt/disk/')
     elif disk_type == 'ufs':
-        os.system('mount /dev/sda8 /mnt/disk/')
+        os.system('mount -t ufs -o ro,ufstype=ufs2 /dev/sda8 /mnt/disk/')
 
 
 # Перемещаемся в директорию диска
