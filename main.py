@@ -123,6 +123,5 @@ if __name__ == "__main__":
         max_temp = max(temperature_values)
         file_write('disk_test.txt', actual_date + ' | ' + vendor_disk_name + ' | ' + str(max_temp) + '°C' +'\n')
         file_read('disk_test.txt')
-        os.system('umount /mnt/disk/')
         # print('Максимальная температура: ', max(
         #     temperature_values), '°C', sep='')
