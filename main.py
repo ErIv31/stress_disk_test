@@ -25,7 +25,7 @@ def how_many_partitions(disk):
 
 # Определяем название вендора жесткого диска
 def get_vendor_disk_name(output):
-    return re.search(r'ata.*', output).group(0).split(' ')[0][4:29]
+    return re.search(r'ata.*', output).group(0).split(' ')[0][4:29].replace('_', ' ')
 
 
 # Определяем тип диска ufs, ext4, ...
@@ -105,8 +105,7 @@ if __name__ == "__main__":
     disks = get_console_output('ls -l /dev/disk/by-id')
     # определение логического имени жесткого диска
     logic_disk_name = get_logical_disk_name(disks)
-    vendor_disk_name = (re.search(r'ata.*', disks).group(0).split(' ')
-                        [0][4:29]).replace('_', ' ')  # определение названия вендора диска
+    vendor_disk_name = get_vendor_disk_name(disks)  # определение названия вендора диска
     actual_date = datetime.datetime.now().strftime(
         '%d.%m.%Y')  # вывод актуальной даты проверки диска
     amount_of_disk_partition = how_many_partitions(
