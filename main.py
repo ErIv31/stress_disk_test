@@ -56,7 +56,8 @@ def mount_disk():
 def start_stress_test(test_time: str):
     #os.system(f'stress-ng --class filesystem --sequential 8 --timeout {test_time}s --metrics-brief &')
     #os.system(f'stress-ng --cpu 4 --io 4 --hdd 4 hdd-opts rd-rnd wr-rnd --vm 4 --timeout {test_time}s &')
-    os.system(f'cd /mnt/disk; stress-ng --timeout {test_time}s --hdd 0 &') # нагрузка только диска
+    # нагрузка только диска
+    os.system(f'cd /mnt/disk; stress-ng --timeout {test_time}s --hdd 0 &')
     print(f'Тест начнётся в течение {test_time} секунд')
     # os.system(
     #     f'stress-ng --sequential 0 --class io --timeout {test_time}s --metrics-brief &')
@@ -78,7 +79,7 @@ def temperature_list(time_end, logic_disk_name):
     value_list = []
     while time.time() <= time_end:
         temperature_value = get_console_output(
-            f"smartctl -A /dev/{logic_disk_name} | grep 194").split(' ')[-3] # Надо изменить sda на logic_name, который передается из другой функции
+            f"smartctl -A /dev/{logic_disk_name} | grep 194").split(' ')[-3]
         value_list.append(int(temperature_value))
         #date = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         #print(date, 'Температура: ' + temperature_value, end='')
@@ -90,7 +91,7 @@ def file_write(filename, value):
     open_file = open(filename, 'a')
     open_file.write(value)
     open_file.close()
-    
+
 
 # Открываем для чтения текстовый файл с информацией по тестам
 def file_read(filename):
@@ -100,23 +101,34 @@ def file_read(filename):
 
 
 if __name__ == "__main__":
-    disks = get_console_output('ls -l /dev/disk/by-id') # определение установленных дисков в платформу 
-    logic_disk_name = get_logical_disk_name(disks) # определение логического имени жесткого диска
-    vendor_disk_name = (re.search(r'ata.*', disks).group(0).split(' ')[0][4:29]).replace('_', ' ') # определение названия вендора диска
-    actual_date = datetime.datetime.now().strftime('%d.%m.%Y') # вывод актуальной даты проверки диска
-    amount_of_disk_partition = how_many_partitions(logic_disk_name) # подсчет разделов диска 
+    # определение установленных дисков в платформу
+    disks = get_console_output('ls -l /dev/disk/by-id')
+    # определение логического имени жесткого диска
+    logic_disk_name = get_logical_disk_name(disks)
+    vendor_disk_name = (re.search(r'ata.*', disks).group(0).split(' ')
+                        [0][4:29]).replace('_', ' ')  # определение названия вендора диска
+    actual_date = datetime.datetime.now().strftime(
+        '%d.%m.%Y')  # вывод актуальной даты проверки диска
+    amount_of_disk_partition = how_many_partitions(
+        logic_disk_name)  # подсчет разделов диска
     # Цикл в котором определяется надо форматировать диск или нет. Если диск новый или на нем установлена система freebsd, то его форматнут и сделает разметку ext4
-    if amount_of_disk_partition <= 1: 
+    if amount_of_disk_partition <= 1:
         format_disk(logic_disk_name)
-        #os.system(f'echo "g\nn\np\n1\n\n\nw" | fdisk /dev/{logic_disk_name}; mkfs.ext4 /dev/{logic_disk_name}1')
         amount_of_disk_partition = how_many_partitions(logic_disk_name)
-    mount_disk() # подключаем жесткий диск к LiveUSB 
-    test_time = input('Укажи время теста в секундах: ') # Указываем время теста
-    start_stress_test(test_time) # Запускаем стресс тест, в начале выполняется переход в директорию примонтированного диска, затем выполняется stress-ng в фоновом режиме
-    temperature_values = temperature_list(time_calculator(test_time), logic_disk_name) # Прараллельно тесту заполняется список с значениями температур жесткого диска
-    # print(temperature_values)
-    max_temp = max(temperature_values) # вычисляется максимальная температура нагрева диска в ходе теста
-    file_write('disk_test.txt', actual_date + ' | ' + vendor_disk_name + ' | ' + str(max_temp) + '°C' +'\n') # создается или записывается в уже созданный файл значения: дата проверки, вендор диска, макс. температура
-    file_read('disk_test.txt') # выводится информация, записанная в файл, на экран оператора
+    mount_disk()  # подключаем жесткий диск к LiveUSB
+    # Указываем время теста
+    test_time = input('Укажи время теста в секундах: ')
+    # Запускаем стресс тест, в начале выполняется переход в директорию примонтированного диска, затем выполняется stress-ng в фоновом режиме
+    start_stress_test(test_time)
+    # Прараллельно тесту заполняется список с значениями температур жесткого диска
+    temperature_values = temperature_list(
+        time_calculator(test_time), logic_disk_name)
+    # вычисляется максимальная температура нагрева диска в ходе теста
+    max_temp = max(temperature_values)
+    # создается или записывается в уже созданный файл значения: дата проверки, вендор диска, макс. температура
+    file_write('disk_test.txt', actual_date + ' | ' +
+               vendor_disk_name + ' | ' + str(max_temp) + '°C' + '\n')
+    # выводится информация, записанная в файл, на экран оператора
+    file_read('disk_test.txt')
     # print('Максимальная температура: ', max(
     #     temperature_values), '°C', sep='')
