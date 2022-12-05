@@ -111,7 +111,7 @@ if __name__ == "__main__":
     amount_of_disk_partition = how_many_partitions(
         logic_disk_name)  # подсчет разделов диска
     # Цикл в котором определяется надо форматировать диск или нет. Если диск новый или на нем установлена система freebsd, то его форматнут и сделает разметку ext4
-    if amount_of_disk_partition <= 1:
+    if amount_of_disk_partition <= 1 and get_disk_type() != 'ext':
         format_disk(logic_disk_name)
         amount_of_disk_partition = how_many_partitions(logic_disk_name)
     mount_disk()  # подключаем жесткий диск к LiveUSB
